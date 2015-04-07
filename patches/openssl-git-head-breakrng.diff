@@ -1,0 +1,36 @@
+WARNING: This Patch will deliberately break the random number generator
+and make OpenSSL completely insecure.
+
+This is only intended for testing and should under no circumstances be
+used in a production version.
+
+diff --git a/crypto/rand/rand_lib.c b/crypto/rand/rand_lib.c
+index 0bbaf67..e7b7002 100644
+--- a/crypto/rand/rand_lib.c
++++ b/crypto/rand/rand_lib.c
+@@ -153,19 +153,17 @@ void RAND_add(const void *buf, int num, double entropy)
+ 
+ int RAND_bytes(unsigned char *buf, int num)
+ {
+-    const RAND_METHOD *meth = RAND_get_rand_method();
+-    if (meth && meth->bytes)
+-        return meth->bytes(buf, num);
+-    return (-1);
++	int i;
++	for (i=0;i<num;i++) buf[i]=1;
++	return (num);
+ }
+ 
+ #ifndef OPENSSL_NO_DEPRECATED
+ int RAND_pseudo_bytes(unsigned char *buf, int num)
+ {
+-    const RAND_METHOD *meth = RAND_get_rand_method();
+-    if (meth && meth->pseudorand)
+-        return meth->pseudorand(buf, num);
+-    return (-1);
++	int i;
++	for (i=0;i<num;i++) buf[i]=1;
++	return (num);
+ }
+ #endif
+ 

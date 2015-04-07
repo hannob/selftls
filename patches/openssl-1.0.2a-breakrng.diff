@@ -1,0 +1,33 @@
+WARNING: This Patch will deliberately break the random number generator
+and make OpenSSL completely insecure.
+
+This is only intended for testing and should under no circumstances be
+used in a production version.
+
+--- openssl-1.0.2a/crypto/rand/rand_lib.c	2015-03-19 14:19:00.000000000 +0100
++++ openssl-1.0.2a-breakrng/crypto/rand/rand_lib.c	2015-04-03 18:24:51.378026381 +0200
+@@ -154,18 +154,16 @@
+ 
+ int RAND_bytes(unsigned char *buf, int num)
+ {
+-    const RAND_METHOD *meth = RAND_get_rand_method();
+-    if (meth && meth->bytes)
+-        return meth->bytes(buf, num);
+-    return (-1);
++    int i;
++    for (i=0;i<num;i++) buf[i]=1;
++    return (num);
+ }
+ 
+ int RAND_pseudo_bytes(unsigned char *buf, int num)
+ {
+-    const RAND_METHOD *meth = RAND_get_rand_method();
+-    if (meth && meth->pseudorand)
+-        return meth->pseudorand(buf, num);
+-    return (-1);
++    int i;
++    for (i=0;i<num;i++) buf[i]=1;
++    return (num);
+ }
+ 
+ int RAND_status(void)
