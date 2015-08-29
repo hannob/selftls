@@ -61,49 +61,49 @@ int main(int argc, char **argv) {
 	c = 0;
 	do {
 
-	r= SSL_do_handshake(client);
-	if (r == -1) {
-		if ((SSL_get_error(client, r) != SSL_ERROR_WANT_WRITE) &&
-		    (SSL_get_error(client, r) != SSL_ERROR_WANT_READ) )
-		err();
-	}
+		r = SSL_do_handshake(client);
+		if (r == -1) {
+			if ((SSL_get_error(client, r) != SSL_ERROR_WANT_WRITE) &&
+				(SSL_get_error(client, r) != SSL_ERROR_WANT_READ) )
+			  err();
+		}
 
-	r = BIO_read(coutbio,buf,4096);
-	if (r == -1) err();
-	c++;
+		r = BIO_read(coutbio,buf,4096);
+		if (r == -1) err();
+		c++;
 
-	if (c == step) {
-		f = fopen(ifi, "rb");
-		r=fread(buf,1,4096,f);
-	} else {
-		sprintf(fn, "packet-%i", c);
-		f=fopen(fn, "wb");
-		fwrite(buf, 1, r, f);
-	}
-	BIO_write(sinbio, buf, r);
+		if (c == step) {
+			f = fopen(ifi, "rb");
+			r = fread(buf,1,4096,f);
+		} else {
+			sprintf(fn, "packet-%i", c);
+			f = fopen(fn, "wb");
+			fwrite(buf, 1, r, f);
+		}
+		BIO_write(sinbio, buf, r);
 
-	r = SSL_do_handshake(server);
-	if (r == -1) {
-		if ((SSL_get_error(server, r) != SSL_ERROR_WANT_WRITE) &&
-		    (SSL_get_error(server, r) != SSL_ERROR_WANT_READ) )
-		err();
-	}
+		r = SSL_do_handshake(server);
+		if (r == -1) {
+			if ((SSL_get_error(server, r) != SSL_ERROR_WANT_WRITE) &&
+				(SSL_get_error(server, r) != SSL_ERROR_WANT_READ) )
+			err();
+		}
 
-	r = BIO_read(soutbio,buf,4096);
-	if (r == -1) err();
-	c++;
-	if (c == step) {
-		f = fopen(ifi, "rb");
-		r=fread(buf, 1, 4096, f);
-	} else {
-		sprintf(fn, "packet-%i", c);
-		f=fopen(fn, "wb");
-		fwrite(buf, 1, r, f);
-	}
-	BIO_write(cinbio,buf,r);
+		r = BIO_read(soutbio,buf,4096);
+		if (r == -1) err();
+		c++;
+		if (c == step) {
+			f = fopen(ifi, "rb");
+			r = fread(buf, 1, 4096, f);
+		} else {
+			sprintf(fn, "packet-%i", c);
+			f = fopen(fn, "wb");
+			fwrite(buf, 1, r, f);
+		}
+		BIO_write(cinbio,buf,r);
 
-	printf("server state: %s / %s\n",SSL_state_string(server), SSL_state_string_long(server));
-	printf("client state: %s / %s\n",SSL_state_string(client), SSL_state_string_long(client));
+		printf("server state: %s / %s\n",SSL_state_string(server), SSL_state_string_long(server));
+		printf("client state: %s / %s\n",SSL_state_string(client), SSL_state_string_long(client));
 	} while ((!SSL_is_init_finished(server) || !SSL_is_init_finished(client)) && c<10);
 
 	return 0;
