@@ -83,9 +83,12 @@ int main(int argc, char **argv)
 		c++;
 
 		if (c == step) {
+#ifdef __AFL_HAVE_MANUAL_CONTROL
+			__AFL_INIT();
+#endif
 			f = fopen(ifi, "rb");
 			r = fread(buf, 1, 4096, f);
-		} else {
+		} else if (step == -1) {
 			sprintf(fn, "packet-%i", c);
 			f = fopen(fn, "wb");
 			fwrite(buf, 1, r, f);
@@ -105,9 +108,12 @@ int main(int argc, char **argv)
 			err();
 		c++;
 		if (c == step) {
+#ifdef __AFL_HAVE_MANUAL_CONTROL
+			__AFL_INIT();
+#endif
 			f = fopen(ifi, "rb");
 			r = fread(buf, 1, 4096, f);
-		} else {
+		} else if (step == -1) {
 			sprintf(fn, "packet-%i", c);
 			f = fopen(fn, "wb");
 			fwrite(buf, 1, r, f);
