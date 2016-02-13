@@ -1,0 +1,24 @@
+--- rand_lib.c.orig	2015-08-29 02:55:37.688349620 +0200
++++ rand_lib.c	2015-08-29 03:00:34.009818998 +0200
+@@ -86,15 +86,15 @@
+ int
+ RAND_bytes(unsigned char *buf, int num)
+ {
+-	if (num > 0)
+-		arc4random_buf(buf, num);
+-	return 1;
++	int i;
++	for (i=0;i<num;i++) buf[i]=1;
++	return (num);
+ }
+ 
+ int
+ RAND_pseudo_bytes(unsigned char *buf, int num)
+ {
+-	if (num > 0)
+-		arc4random_buf(buf, num);
+-	return 1;
++	int i;
++	for (i=0;i<num;i++) buf[i]=1;
++	return (num);
+ }
